@@ -38,9 +38,20 @@ const teacherStorage = new CloudinaryStorage({
   },
 });
 
+// Staff photo storage
+const staffStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'malkhanagar-college/staff',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 400, height: 500, crop: 'fill', quality: 'auto' }],
+  },
+});
+
 const uploadImage = multer({ storage: imageStorage, limits: { fileSize: 5 * 1024 * 1024 } });
 const uploadPDF = multer({ storage: pdfStorage, limits: { fileSize: 10 * 1024 * 1024 } });
 const uploadTeacher = multer({ storage: teacherStorage, limits: { fileSize: 3 * 1024 * 1024 } });
+const uploadStaff = multer({ storage: staffStorage, limits: { fileSize: 3 * 1024 * 1024 } });
 
 const deleteFromCloudinary = async (publicId, resourceType = 'image') => {
   try {
@@ -50,4 +61,4 @@ const deleteFromCloudinary = async (publicId, resourceType = 'image') => {
   }
 };
 
-module.exports = { cloudinary, uploadImage, uploadPDF, uploadTeacher, deleteFromCloudinary };
+module.exports = { cloudinary, uploadImage, uploadPDF, uploadTeacher, uploadStaff, deleteFromCloudinary };

@@ -8,6 +8,7 @@ const teacherSchema = new mongoose.Schema({
   department: { type: String },
   subject: { type: String },
   qualification: { type: String },
+  bcsBatch: { type: String }, // BCS ব্যাচ নম্বর — ঐচ্ছিক (optional)
   experience: { type: String },
   phone: { type: String },
   email: { type: String },
