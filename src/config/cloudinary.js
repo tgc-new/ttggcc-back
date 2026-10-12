@@ -12,19 +12,19 @@ cloudinary.config({
 const imageStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'malkhanagar-college/images',
+    folder: 'tungipara-college/images',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
     transformation: [{ width: 1200, crop: 'limit', quality: 'auto' }],
   },
 });
 
-// PDF storage
+// PDF storage (Fixed download issue)
 const pdfStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'malkhanagar-college/pdfs',
+    folder: 'tungipara-college/pdfs',
     allowed_formats: ['pdf'],
-    resource_type: 'raw',
+    resource_type: 'auto',
   },
 });
 
@@ -32,7 +32,7 @@ const pdfStorage = new CloudinaryStorage({
 const teacherStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'malkhanagar-college/teachers',
+    folder: 'tungipara-college/teachers',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
     transformation: [{ width: 400, height: 500, crop: 'fill', quality: 'auto' }],
   },
@@ -42,7 +42,7 @@ const teacherStorage = new CloudinaryStorage({
 const staffStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'malkhanagar-college/staff',
+    folder: 'tungipara-college/staff',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
     transformation: [{ width: 400, height: 500, crop: 'fill', quality: 'auto' }],
   },
