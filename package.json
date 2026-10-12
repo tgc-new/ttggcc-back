@@ -1,7 +1,7 @@
 {
   "name": "college-backend",
   "version": "1.0.0",
-  "description": "Malkhanagar College Backend API",
+  "description": "tungipara govt College Backend API",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
