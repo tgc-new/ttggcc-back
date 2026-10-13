@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Notice = require('../models/Notice');
 const { protect } = require('../middleware/auth');
-const { uploadPDF } = require('../config/cloudinary');
+const { uploadImage, uploadPDF } = require('../config/cloudinary');
 
 // @GET /api/notices
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, category, isImportant, isScrolling } = req.query;
+    const { page = 1, limit = 15, category, isImportant, isScrolling } = req.query;
     const filter = { isActive: true };
     if (category) filter.category = category;
     if (isImportant === 'true') filter.isImportant = true;
-    if (isScrolling  === 'true') filter.isScrolling  = true;
+    if (isScrolling === 'true') filter.isScrolling = true;
 
-    const total   = await Notice.countDocuments(filter);
+    const total = await Notice.countDocuments(filter);
     const notices = await Notice.find(filter)
       .sort({ isImportant: -1, publishDate: -1 })
       .skip((page - 1) * limit)
@@ -54,70 +54,52 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// @POST /api/notices - Admin
+// @POST /api/notices (Create Notice with proper PDF upload)
 router.post('/', protect, uploadPDF.single('pdfFile'), async (req, res) => {
   try {
-    const { isNew, isScrolling, isImportant, isNewNotice, isActive, ...rest } = req.body;
-
-    const noticeData = {
-      ...rest,
-      isNewNotice:  isNew === 'true'       || isNew === true       || isNewNotice === 'true',
-      isScrolling:  isScrolling === 'true'  || isScrolling === true,
-      isImportant:  isImportant === 'true'  || isImportant === true,
-      isActive:     isActive === 'false'    || isActive === false ? false : true,
-      createdBy: req.admin._id,
-    };
-
+    const noticeData = { ...req.body };
     if (req.file) {
       noticeData.pdfFile = {
-        url:          req.file.path,
-        publicId:     req.file.filename,
-        originalName: req.file.originalname,
+        url: req.file.path,
+        publicId: req.file.filename,
+        originalName: req.file.originalname
       };
     }
-
     const notice = await Notice.create(noticeData);
-    res.status(201).json({ success: true, message: 'Notice created', data: notice });
+    res.status(201).json({ success: true, data: notice });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// @PUT /api/notices/:id - Admin
+// @PUT /api/notices/:id
 router.put('/:id', protect, uploadPDF.single('pdfFile'), async (req, res) => {
   try {
-    const { isNew, isScrolling, isImportant, isNewNotice, isActive, ...rest } = req.body;
-
-    const updateData = {
-      ...rest,
-      isNewNotice:  isNew === 'true'       || isNew === true       || isNewNotice === 'true',
-      isScrolling:  isScrolling === 'true'  || isScrolling === true,
-      isImportant:  isImportant === 'true'  || isImportant === true,
-      isActive:     isActive === 'false'    || isActive === false ? false : true,
-    };
-
+    let notice = await Notice.findById(req.params.id);
+    if (!notice) return res.status(404).json({ success: false, message: 'Notice not found' });
+    
+    const noticeData = { ...req.body };
     if (req.file) {
-      updateData.pdfFile = {
-        url:          req.file.path,
-        publicId:     req.file.filename,
-        originalName: req.file.originalname,
+      noticeData.pdfFile = {
+        url: req.file.path,
+        publicId: req.file.filename,
+        originalName: req.file.originalname
       };
     }
-
-    const notice = await Notice.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
-    if (!notice) return res.status(404).json({ success: false, message: 'Notice not found' });
-    res.json({ success: true, message: 'Notice updated', data: notice });
+    notice = await Notice.findByIdAndUpdate(req.params.id, noticeData, { new: true });
+    res.json({ success: true, data: notice });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// @DELETE /api/notices/:id - Admin
+// @DELETE /api/notices/:id
 router.delete('/:id', protect, async (req, res) => {
   try {
-    const notice = await Notice.findByIdAndDelete(req.params.id);
+    const notice = await Notice.findById(req.params.id);
     if (!notice) return res.status(404).json({ success: false, message: 'Notice not found' });
-    res.json({ success: true, message: 'Notice deleted' });
+    await notice.deleteOne();
+    res.json({ success: true, message: 'Notice deleted successfully' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
