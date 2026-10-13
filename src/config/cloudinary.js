@@ -23,7 +23,7 @@ const pdfStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'tungipara-college/pdfs',
-    resource_type: 'auto', // এই লাইনটি নিশ্চিত করবে ফাইলটি যেন র ফাইল বা ইমেজ না হয়ে আসল পিডিএফ হিসেবেই সেভ হয়
+    resource_type: 'auto', // এই লাইনটি নিশ্চিত করবে ফাইলটি যেন আসল পিডিএফ হিসেবেই সেভ হয়
     flags: 'attachment'
   },
 });
