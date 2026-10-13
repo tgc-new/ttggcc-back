@@ -13,7 +13,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'tungipara-college',
+    folder: 'malkhanagar_college',
     allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
@@ -22,12 +22,11 @@ const storage = new CloudinaryStorage({
 const pdfStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'tungipara-college/pdfs',
+    folder: 'malkhanagar_college/pdfs',
     resource_type: 'auto', // এই লাইনটি নিশ্চিত করবে ফাইলটি যেন আসল পিডিএফ হিসেবেই সেভ হয়
     flags: 'attachment'
   },
 });
-
 const uploadImg = multer({ storage: storage });
 const uploadPDF = multer({ storage: pdfStorage, limits: { fileSize: 10 * 1024 * 1024 } });
 
